@@ -14,9 +14,9 @@
 (swap! room-schedule assoc :name "Meteor")
 (swap! room-schedule assoc :current-booking {
   :summary "Amazon QuickSight: A Fast, Cloud-Powered BI Service Confirmation",
-  :organizer "Webinars Aws"
+  :organizer {:name "Webinars Aws"}
   :starts-at "2015-10-27T09:00:00.000-07:00"
-  :ends-at "2015-10-27T10:00:00.000-07:00"})
+  :ends-at "2015-10-27T09:50:00.000-07:00"})
 (swap! room-schedule assoc :next-booking nil)
 
 ;; -------------------------
@@ -35,22 +35,23 @@
 (defn format-time [datestring]
   (.format (js/moment. datestring) "h:mm a"))
 
-(defn event-component [event]
- [:div.event
-   [:h2.eventName (get event :summary)]
-   [:div [:span (format-time (get event :starts-at))] " - "
-         [:span (format-time (get event :ends-at))]]
-   [:div "by " [:span (get event :organizer)]]])
+(defn booking-component [booking]
+  (let [{:keys [summary starts-at ends-at organizer]} booking]
+    [:div.event
+      [:h2.eventName summary]
+      [:div [:span (format-time starts-at)] " - "
+            [:span (format-time ends-at)]]
+   [:div "by " [:span (get organizer :name)]]]))
 
-(defn meeting-room-component [room]
-  [:div.room {:class "room occupied"}
-    [:div.clock
-      [:span.time (.format (js/moment.) "h:mm a")]
-      [:span.date (.format (js/moment.) "MMM Do")]]
-    [:div.roomName [:h1 (get room :name)]]
-    [event-component (get room :current-booking)]
-    [event-component nil]
-    ])
+(defn meeting-room-component [room-schedule]
+  (let [{:keys [current-booking next-booking name]} room-schedule]
+    [:div.room {:class "room occupied"}
+      [:div.clock
+        [:span.time (.format (js/moment.) "h:mm a")]
+        [:span.date (.format (js/moment.) "MMM Do")]]
+      [:div.roomName [:h1 name]]
+    (if current-booking [booking-component current-booking])
+    (if next-booking [booking-component next-booking])]))
 
 ;; -------------------------
 ;; Views
