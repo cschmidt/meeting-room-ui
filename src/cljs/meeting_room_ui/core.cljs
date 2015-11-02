@@ -10,21 +10,17 @@
 ;; -------------------------
 ;; Data
 
-(def room-schedule-data
-  {:name "Meteor"
-   :current-booking {
-     :summary "Amazon QuickSight: A Fast, Cloud-Powered BI Service Confirmation",
-     :organizer "Webinars Aws"
-     :starts-at "2015-10-27T09:00:00.000-07:00"
-     :ends-at "2015-10-27T10:00:00.000-07:00"}
-   :next-booking nil})
-
-(defonce room-schedule (reagent/atom nil))
+(defonce room-schedule (reagent/atom {}))
+(swap! room-schedule assoc :name "Anchor")
+(swap! room-schedule assoc :current-booking {
+  :summary "Amazon QuickSight: A Fast, Cloud-Powered BI Service Confirmation",
+  :organizer "Webinars Aws"
+  :starts-at "2015-10-27T09:00:00.000-07:00"
+  :ends-at "2015-10-27T10:00:00.000-07:00"})
+(swap! room-schedule assoc :next-booking nil)
 
 ;; Components
-
 ;; -------------------------
-;; Views
 
 (defn nav-bar []
   [:nav
@@ -54,9 +50,12 @@
     [:div.roomName [:h1 (get room :name)]]
     [event-component (get room :current-booking)]])
 
+;; -------------------------
+;; Views
+
 (defn meeting-room []
   [:div
-    [meeting-room-component room-schedule-data]
+    [meeting-room-component @room-schedule]
     [nav-bar]])
 
 (defn about-page []
