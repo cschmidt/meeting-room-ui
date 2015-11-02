@@ -10,7 +10,6 @@
 ;; -------------------------
 ;; Data
 
-(defonce events (reagent/atom (array)))
 (def room-schedule-data
   {:name "Meteor"
    :current-booking {
@@ -45,16 +44,15 @@
    [:h2.eventName (get event :summary)]
    [:div [:span (format-time (get event :starts-at))] " - "
          [:span (format-time (get event :ends-at))]]
-   [:div (str "It is now " (js/Date.))]
    [:div "by " [:span (get event :organizer)]]])
 
 (defn meeting-room-component [room]
   [:div.room {:class "room occupied"}
-    [:div.clock [:span.time "1:02PM"] [:span.date "Dec 20th"]]
+    [:div.clock
+      [:span.time (.format (js/moment.) "h:mm a")]
+      [:span.date (.format (js/moment.) "MMM Do")]]
     [:div.roomName [:h1 (get room :name)]]
-    [event-component (get room :current-booking)]
-    [:div.event
-      [:div "(Available for the rest of the day)"]]])
+    [event-component (get room :current-booking)]])
 
 (defn meeting-room []
   [:div
