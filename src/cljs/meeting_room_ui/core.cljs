@@ -30,6 +30,7 @@
 
 (defn home-page []
   [:div [:h2 "Welcome to meeting-room-ui"]
+  [:div {:class "g-signin2", :data-onsuccess "onSignIn", :data-theme "dark"}]
    [nav-bar]])
 
 (defn format-time [datestring]
