@@ -4,7 +4,8 @@
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [goog.history.EventType :as EventType]
-              [cljsjs.moment])
+              [cljsjs.moment]
+              [ajax.core :refer [GET POST]])
     (:import goog.History))
 
 ;; -------------------------
@@ -19,6 +20,17 @@
   :ends-at "2015-10-27T09:50:00.000-07:00"})
 (swap! room-schedule assoc :next-booking nil)
 
+(defn handle-room-update [data]
+  (.log js/console (str "I got:" data))
+  (reset! room-schedule data))
+
+(defn update-schedule []
+  (GET "http://something.unbounce.com:8080/calendar-summary"
+       {:handler handle-room-update
+        :keywords? true
+        :response-format :json
+        :with-credentials true}))
+
 ;; -------------------------
 ;; Components
 
@@ -26,10 +38,11 @@
   [:nav
     [:a {:href "#/"} "Home"]
     [:a {:href "#/about"} "About"]
-    [:a {:href "#/meeting-room"} "Meeting Room"]])
+    [:a {:href "#/meeting-room"} "Meeting Room"]]
+    [:button {:name "Update" :on-click update-schedule} "Update"])
 
 (defn home-page []
-  [:div [:h2 "Welcome to meeting-room-ui"]
+  [:div [:h2 "Welcome to the meeting room"]
   [:div {:class "g-signin2", :data-onsuccess "onSignIn", :data-theme "dark"}]
    [nav-bar]])
 
