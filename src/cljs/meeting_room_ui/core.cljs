@@ -5,20 +5,24 @@
               [goog.events :as events]
               [goog.history.EventType :as EventType]
               [cljsjs.moment]
-              [ajax.core :refer [GET POST]])
+              [ajax.core :refer [GET POST]]
+              [clojure.string :as s])
     (:import goog.History))
 
 ;; -------------------------
 ;; Data
 
 (defonce room-schedule (reagent/atom {}))
-(swap! room-schedule assoc :name "Meteor")
+(swap! room-schedule assoc :name "4th Floor - Meteor - HQ")
 (swap! room-schedule assoc :current-booking {
-  :summary "Amazon QuickSight: A Fast, Cloud-Powered BI Service Confirmation",
-  :organizer {:name "Webinars Aws"}
+  :summary "(meeting name)",
+  :organizer {:name "(organizer)"}
   :starts-at "2015-10-27T09:00:00.000-07:00"
   :ends-at "2015-10-27T09:50:00.000-07:00"})
 (swap! room-schedule assoc :next-booking nil)
+
+(defn short-room-name [full-name]
+  (-> (s/split full-name #"-") second s/trim))
 
 (defn handle-room-update [data]
   (.log js/console (str "I got:" data))
@@ -51,19 +55,25 @@
 
 (defn booking-component [booking]
   (let [{:keys [summary starts-at ends-at organizer]} booking]
-    [:div.event
-      [:h2.eventName summary]
-      [:div [:span (format-time starts-at)] " - "
-            [:span (format-time ends-at)]]
-   [:div "by " [:span (get organizer :name)]]]))
+    [:div.meeting
+      [:div.meeting-time (format-time starts-at) " - " (format-time ends-at)]
+      [:div.meeting-title summary]
+      [:div.meeting-organizer [:span "Organized by: "] (get organizer :name "(unknown)")]
+      [:div.meeting-participants "tbd"]]))
+
+(defn footer-component [booking]
+  (let [{:keys [summary starts-at ends-at organizer]} booking]
+    [:div.meeting-footer
+     [:div.label "Next Meeting:"]
+     [:div.notification
+      [:div.meeting-time (format-time starts-at) " - " (format-time ends-at)]
+      [:div.meeting-title summary]]]))
 
 (defn meeting-room-component [room-schedule]
   (let [{:keys [current-booking next-booking name]} room-schedule]
-    [:div.room {:class "room occupied"}
-      [:div.clock
-        [:span.time (.format (js/moment.) "h:mm a")]
-        [:span.date (.format (js/moment.) "MMM Do")]]
-      [:div.roomName [:h1 name]]
+    [:div.meeting-container {:class (str "busy" " " (s/lower-case (short-room-name name)))}
+      [:div.meeting-room-name (short-room-name name)]
+      [:div.time (.format (js/moment.) "h:mm a")]
     (if current-booking [booking-component current-booking])
     (if next-booking [booking-component next-booking])]))
 

@@ -10,10 +10,7 @@
 
 (def mount-target
   [:div#app
-      [:h3 "ClojureScript has not been compiled!"]
-      [:p "please run "
-       [:b "lein figwheel"]
-       " in order to start the compiler"]])
+      [:h3 "Loading..."]])
 
 (def home-page
   (html
@@ -24,6 +21,7 @@
              :content "width=device-width, initial-scale=1"}]
      [:meta {:name "google-signin-scope" :content "profile email"}]
      [:meta {:name "google-signin-client_id" :content "308276111773-emqvl2qrgpd695iqd91u0ublbb9d9ovc.apps.googleusercontent.com"}]
+     [:link {:rel "stylesheet" :type "text/css" :href "//cloud.typography.com/7928512/722606/css/fonts.css"}]
      [:script {:src "https://apis.google.com/js/platform.js" :async true :defer true}]
      (include-css (if (env :dev) "css/site.css" "css/site.min.css"))]
     [:body
