@@ -18,7 +18,8 @@
                  [org.clojure/clojurescript "1.7.145" :scope "provided"]
                  [secretary "1.2.3"]
                  [cljsjs/moment "2.10.6-0"]
-                 [cljs-ajax "0.5.1"]]
+                 [cljs-ajax "0.5.1"]
+                 [cljsjs/bankersbox "0.1.0-0"]]
 
   :plugins [[lein-environ "1.0.1"]
             [lein-asset-minifier "0.2.2"]]
